@@ -88,8 +88,6 @@ xcopy $(TargetPath) "\\mpaserver59\Data$\Incoming" /Y
 xcopy $(TargetPath) "\\mpaserver59\Data$\CLR" /Y
 xcopy $(TargetPath) "\\mpaserver60\Data$\Incoming" /Y
 xcopy $(TargetPath) "\\mpaserver60\Data$\CLR" /Y
-xcopy $(TargetPath) "C:\Data\Incoming" /Y
-xcopy $(TargetPath) "C:\Data\CLR" /Y
 ) ELSE (
   echo "why, Microsoft, why".
 )</PostBuildEvent>

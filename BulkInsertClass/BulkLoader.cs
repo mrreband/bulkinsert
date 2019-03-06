@@ -92,8 +92,8 @@ namespace BulkInsertClass
         protected int GetSqlRowCount(SqlConnection targetConn, string targetTable)
         {
             using (var rcCmd = new SqlCommand(string.Format(@"  IF OBJECT_ID('{0}') IS NOT NULL BEGIN 
-                                                                    DROP TABLE IF EXISTS #mpa_spaceused
-                                                                    CREATE TABLE #mpa_spaceused
+                                                                    DROP TABLE IF EXISTS #spaceused
+                                                                    CREATE TABLE #spaceused
                                                                     (
 	                                                                    name VARCHAR(256), 
 	                                                                    rows BIGINT, 
@@ -102,10 +102,10 @@ namespace BulkInsertClass
 	                                                                    index_size VARCHAR(256), 
 	                                                                    unused VARCHAR(256)
                                                                     )
-                                                                    INSERT INTO #mpa_spaceused
+                                                                    INSERT INTO #spaceused
                                                                     EXEC sp_spaceused '{0}'
 
-                                                                    SELECT rows FROM #mpa_spaceused
+                                                                    SELECT rows FROM #spaceused
                                                                 END
                                                                 ELSE SELECT 0 as rows", targetTable), targetConn))
                 return Convert.ToInt32(rcCmd.ExecuteScalar().ToString());
@@ -142,7 +142,8 @@ namespace BulkInsertClass
                 int i = 1;
                 foreach (var column in TargetColumns)
                 {
-                    createTableSql += string.Format("{0} varchar({1}) {2},", GetSqlName(column.Name), column.MaxLength, (column.IsNullable ? "NULL" : "NOT NULL"));
+                    var length = (column.MaxLength == -1) ? "MAX" : column.MaxLength.ToString();
+                    createTableSql += string.Format("{0} varchar({1}) {2},", GetSqlName(column.Name), length, (column.IsNullable ? "NULL" : "NOT NULL"));
                     i++;
                     if (i >= 1024)
                     {

@@ -83,14 +83,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release (
-xcopy $(TargetPath) "\\mpaserver59\Data$\Incoming" /Y
-xcopy $(TargetPath) "\\mpaserver59\Data$\CLR" /Y
-xcopy $(TargetPath) "\\mpaserver60\Data$\Incoming" /Y
-xcopy $(TargetPath) "\\mpaserver60\Data$\CLR" /Y
-) ELSE (
-  echo "why, Microsoft, why".
-)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

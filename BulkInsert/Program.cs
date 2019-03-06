@@ -89,8 +89,8 @@ namespace BulkInsert
                 fileExtension = Path.GetExtension(inputFilePath).ToLower().Replace(".", "");
                 bulkLoadParameters["InputFilePath"] = inputFilePath;
             }
-            else if (!(fileExtension == "csv" || fileExtension == "xlsx" || fileExtension == "sas7bdat" || fileExtension == "tab"))
-                throw new NotImplementedException("Only csv, xlsx, sas7bdat files are supported");
+            else if (!(fileExtension == "csv" || fileExtension == "xlsx" || fileExtension == "sas7bdat" || fileExtension == "tab" || fileExtension == "xml" ))
+                throw new NotImplementedException("Only csv, xlsx, xml, sas7bdat files are supported");
 
             var localFolderPath = GetValidAceDbFileName(Path.GetFileNameWithoutExtension(bulkLoadParameters["InputFilePath"]));
 

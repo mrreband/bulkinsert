@@ -23,6 +23,9 @@ namespace BulkInsert
                 case "SAS":
                     bulkLoader = new SASBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, nullValue, comments, schemaPath, columnFilter);
                     break;
+                case "XML":
+                    bulkLoader = new XMLBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, nullValue, comments, schemaPath, columnFilter);
+                    break;
                 default:
                     throw new ArgumentException("Invalid Repository Type");
             }

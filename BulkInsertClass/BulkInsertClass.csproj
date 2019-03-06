@@ -30,7 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>BulkInsertClassKey.pfx</AssemblyOriginatorKeyFile>
@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BulkLoader.cs" />
+    <Compile Include="XMLBulkLoader.cs" />
     <Compile Include="IBulkLoader.cs" />
     <Compile Include="SASBulkLoader.cs" />
     <Compile Include="XLSBulkLoader.cs" />
@@ -82,17 +83,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release (
-xcopy $(TargetPath) "\\mpaserver59\Data$\CLR" /Y
-xcopy $(TargetPath) "\\mpaserver59\Data$\Incoming" /Y
-xcopy $(TargetPath) "\\mpaserver60\Data$\CLR" /Y
-xcopy $(TargetPath) "\\mpaserver60\Data$\Incoming" /Y
-
-sqlCmd -Smpaserver59.consultmpa.com -Q"ALTER ASSEMBLY BulkInsertClass FROM 'C:\Data\CLR\BulkInsertClass.dll';" -dRawData
-sqlCmd -Smpaserver60.consultmpa.com -Q"ALTER ASSEMBLY BulkInsertClass FROM 'C:\Data\CLR\BulkInsertClass.dll';" -dRawData
-) ELSE (
-  echo "why, Microsoft, why".
-)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -172,7 +172,7 @@ namespace BulkInsert
             return unzippedFilePath;
         }
 
-                static void Notify(object sender, BulkInsertClass.NotifyEventArgs args)
+        static void Notify(object sender, BulkInsertClass.NotifyEventArgs args)
         {
             Console.WriteLine(string.Format("{0}: {1}", args.TargetTable, args.Message));
         }

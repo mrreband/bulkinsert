@@ -3,14 +3,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
-
-using LumenWorks.Framework.IO.Csv;
 
 using System.Linq;
-using System.Xml.Linq;
 
 namespace BulkInsertClass
 {
@@ -237,6 +232,5 @@ namespace BulkInsertClass
 
         public int MaxLength { get; set; }
         public bool IsNullable { get; set; }
-
     }
 }

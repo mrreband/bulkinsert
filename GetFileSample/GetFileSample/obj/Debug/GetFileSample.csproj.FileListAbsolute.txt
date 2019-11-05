@@ -1,0 +1,7 @@
+C:\Users\mreband\Source\Repos\Utilities\GetFileSample\GetFileSample\bin\Debug\GetFileSample.exe.config
+C:\Users\mreband\Source\Repos\Utilities\GetFileSample\GetFileSample\bin\Debug\GetFileSample.exe
+C:\Users\mreband\Source\Repos\Utilities\GetFileSample\GetFileSample\bin\Debug\GetFileSample.pdb
+C:\Users\mreband\Source\Repos\Utilities\GetFileSample\GetFileSample\obj\Debug\GetFileSample.csprojAssemblyReference.cache
+C:\Users\mreband\Source\Repos\Utilities\GetFileSample\GetFileSample\obj\Debug\GetFileSample.csproj.CoreCompileInputs.cache
+C:\Users\mreband\Source\Repos\Utilities\GetFileSample\GetFileSample\obj\Debug\GetFileSample.exe
+C:\Users\mreband\Source\Repos\Utilities\GetFileSample\GetFileSample\obj\Debug\GetFileSample.pdb

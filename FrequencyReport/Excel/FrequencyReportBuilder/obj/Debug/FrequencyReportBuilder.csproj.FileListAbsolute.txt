@@ -1,0 +1,16 @@
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\FrequencyReportBuilder.exe.config
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\FrequencyReportBuilder.exe
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\FrequencyReportBuilder.pdb
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\ClosedXML.dll
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\DocumentFormat.OpenXml.dll
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\FrequencyReport.dll
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\EPPlus.dll
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\FrequencyReport.pdb
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\ClosedXML.pdb
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\ClosedXML.xml
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\bin\Debug\EPPlus.xml
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\obj\Debug\FrequencyReportBuilder.csprojAssemblyReference.cache
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\obj\Debug\FrequencyReportBuilder.csproj.CoreCompileInputs.cache
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\obj\Debug\FrequencyReportBuilder.csproj.CopyComplete
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\obj\Debug\FrequencyReportBuilder.exe
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReportBuilder\obj\Debug\FrequencyReportBuilder.pdb

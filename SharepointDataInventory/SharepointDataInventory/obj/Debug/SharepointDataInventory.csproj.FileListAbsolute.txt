@@ -1,0 +1,2 @@
+C:\Users\mreband\Source\Repos\Utilities\SharepointDataInventory\SharepointDataInventory\obj\Debug\SharepointDataInventory.csprojAssemblyReference.cache
+C:\Users\mreband\Source\Repos\Utilities\SharepointDataInventory\SharepointDataInventory\obj\Debug\SharepointDataInventory.csproj.CoreCompileInputs.cache

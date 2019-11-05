@@ -1,0 +1,10 @@
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReport\bin\Debug\FrequencyReport.dll
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReport\bin\Debug\FrequencyReport.pdb
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReport\bin\Debug\DocumentFormat.OpenXml.dll
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReport\bin\Debug\EPPlus.dll
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReport\bin\Debug\EPPlus.xml
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReport\obj\Debug\FrequencyReport.csprojAssemblyReference.cache
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReport\obj\Debug\FrequencyReport.csproj.CoreCompileInputs.cache
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReport\obj\Debug\FrequencyReport.csproj.CopyComplete
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReport\obj\Debug\FrequencyReport.dll
+C:\Users\mreband\Source\Repos\Utilities\FrequencyReport\Excel\FrequencyReport\obj\Debug\FrequencyReport.pdb

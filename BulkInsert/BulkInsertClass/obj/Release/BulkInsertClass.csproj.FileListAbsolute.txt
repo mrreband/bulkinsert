@@ -1,0 +1,16 @@
+C:\Users\mreband\Source\Repos\Utilities\BulkInsert\BulkInsertClass\bin\Release\BulkInsertClass.dll
+C:\Users\mreband\Source\Repos\Utilities\BulkInsert\BulkInsertClass\bin\Release\BulkInsertClass.pdb
+C:\Users\mreband\Source\Repos\Utilities\BulkInsert\BulkInsertClass\bin\Release\LumenWorks.Framework.IO.dll
+C:\Users\mreband\Source\Repos\Utilities\BulkInsert\BulkInsertClass\bin\Release\LumenWorks.Framework.IO.pdb
+C:\Users\mreband\Source\Repos\Utilities\BulkInsert\BulkInsertClass\bin\Release\LumenWorks.Framework.IO.xml
+C:\Users\mreband\Source\Repos\Utilities\BulkInsert\BulkInsertClass\obj\Release\BulkInsertClass.csprojAssemblyReference.cache
+C:\Users\mreband\Source\Repos\Utilities\BulkInsert\BulkInsertClass\obj\Release\BulkInsertClass.csproj.CoreCompileInputs.cache
+C:\Users\mreband\Source\Repos\Utilities\BulkInsert\BulkInsertClass\obj\Release\BulkInsertClass.csproj.CopyComplete
+C:\Users\mreband\Source\Repos\Utilities\BulkInsert\BulkInsertClass\obj\Release\BulkInsertClass.dll
+C:\Users\mreband\Source\Repos\Utilities\BulkInsert\BulkInsertClass\obj\Release\BulkInsertClass.pdb
+D:\OneDrive\mpal3314\repos\Utilities\BulkInsert\BulkInsertClass\bin\Release\BulkInsertClass.dll
+D:\OneDrive\mpal3314\repos\Utilities\BulkInsert\BulkInsertClass\bin\Release\BulkInsertClass.pdb
+D:\OneDrive\mpal3314\repos\Utilities\BulkInsert\BulkInsertClass\obj\Release\BulkInsertClass.csprojAssemblyReference.cache
+D:\OneDrive\mpal3314\repos\Utilities\BulkInsert\BulkInsertClass\obj\Release\BulkInsertClass.csproj.CoreCompileInputs.cache
+D:\OneDrive\mpal3314\repos\Utilities\BulkInsert\BulkInsertClass\obj\Release\BulkInsertClass.dll
+D:\OneDrive\mpal3314\repos\Utilities\BulkInsert\BulkInsertClass\obj\Release\BulkInsertClass.pdb

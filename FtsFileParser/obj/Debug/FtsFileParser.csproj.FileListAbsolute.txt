@@ -1,7 +1,0 @@
-C:\Users\mreband\Source\Repos\Utilities\FtsFileParser\bin\Debug\FtsFileParser.exe.config
-C:\Users\mreband\Source\Repos\Utilities\FtsFileParser\bin\Debug\FtsFileParser.exe
-C:\Users\mreband\Source\Repos\Utilities\FtsFileParser\bin\Debug\FtsFileParser.pdb
-C:\Users\mreband\Source\Repos\Utilities\FtsFileParser\obj\Debug\FtsFileParser.csproj.CoreCompileInputs.cache
-C:\Users\mreband\Source\Repos\Utilities\FtsFileParser\obj\Debug\FtsFileParser.exe
-C:\Users\mreband\Source\Repos\Utilities\FtsFileParser\obj\Debug\FtsFileParser.pdb
-C:\Users\mreband\Source\Repos\Utilities\FtsFileParser\obj\Debug\FtsFileParser.csprojAssemblyReference.cache

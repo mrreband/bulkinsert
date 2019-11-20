@@ -1,9 +1,0 @@
-C:\Users\mr\source\repos\Utilities\BulkInsert\BulkInsertClass\bin\x64\Release\BulkInsertClass.dll
-C:\Users\mr\source\repos\Utilities\BulkInsert\BulkInsertClass\bin\x64\Release\BulkInsertClass.pdb
-C:\Users\mr\source\repos\Utilities\BulkInsert\BulkInsertClass\bin\x64\Release\LumenWorks.Framework.IO.dll
-C:\Users\mr\source\repos\Utilities\BulkInsert\BulkInsertClass\bin\x64\Release\LumenWorks.Framework.IO.pdb
-C:\Users\mr\source\repos\Utilities\BulkInsert\BulkInsertClass\bin\x64\Release\LumenWorks.Framework.IO.xml
-C:\Users\mr\source\repos\Utilities\BulkInsert\BulkInsertClass\obj\x64\Release\BulkInsertClass.csproj.CoreCompileInputs.cache
-C:\Users\mr\source\repos\Utilities\BulkInsert\BulkInsertClass\obj\x64\Release\BulkInsertClass.csproj.CopyComplete
-C:\Users\mr\source\repos\Utilities\BulkInsert\BulkInsertClass\obj\x64\Release\BulkInsertClass.dll
-C:\Users\mr\source\repos\Utilities\BulkInsert\BulkInsertClass\obj\x64\Release\BulkInsertClass.pdb

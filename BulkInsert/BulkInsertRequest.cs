@@ -92,7 +92,7 @@ namespace BulkInsert
                 ? this.FileExtensionOverride 
                 : Path.GetExtension(InputFilePath).ToLower().Replace(".", "");
 
-            var allowedExtensions = new List<String>() { "csv", "xlsx", "sas7bdat", "tab" };
+            var allowedExtensions = new List<String>() { "csv", "xlsx", "sas7bdat", "tab", "xml" };
             if (fileExtension == "zip")
             {
                 InputFilePath = UnzipFile(InputFilePath);

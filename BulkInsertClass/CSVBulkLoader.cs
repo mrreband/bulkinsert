@@ -57,6 +57,7 @@ namespace BulkInsertClass
                 
                 _transferFinish = DateTime.Now;
                 _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
+                ApplyDataTypes(targetConn, _targetTable);
                 //LogImport(targetConn);
 
                 Nullify(targetConn, _targetTable, _nullValue);
@@ -99,7 +100,7 @@ namespace BulkInsertClass
                     inputFile.Close();
                     foreach (var headerColumn in headerRow.Split(Delimiter))
                     {
-                        TargetColumns.Add(new Column() { Name = headerColumn.Replace("\"", ""), DataType = "varchar", MaxLength = _defaultColumnWidth, IsNullable = true });
+                        TargetColumns.Add(new Column() { Name = headerColumn.Replace("\"", ""), DataType = "varchar", MaxLength = _defaultColumnWidth, IsNullable = false });
                     }
                 }
 
@@ -142,7 +143,7 @@ namespace BulkInsertClass
                     var colInfo = schemaFile.ReadLine();
                     if (Regex.IsMatch(colInfo, @"Col\d+\=", RegexOptions.IgnoreCase))
                     {
-                        //valid column deinition format: 
+                        //valid column definition format: 
                         //Col{0}={1} Text Width {2}
                         colInfo = Regex.Replace(colInfo, @"Col\d+\=", "", RegexOptions.IgnoreCase);
                         var colInfoArray = colInfo.Split();
@@ -151,7 +152,7 @@ namespace BulkInsertClass
                             throw new Exception(string.Format("expected 4 parameters in schema.ini column definition, found {0} ({1})", colInfoArray.Length, colInfo));
 
                         var colName = colInfo.Split()[0];
-                        var dataType = "varchar";//colInfo.Split()[1];
+                        var dataType = "varchar";  //colInfo.Split()[1];
                         var width = colInfo.Split()[2];
                         if (width.ToLower() != "width")
                             throw new Exception(string.Format("expected 3rd parameter in schema.ini column definition to be \"Width\", found {0}", width));
@@ -215,11 +216,13 @@ namespace BulkInsertClass
                 for (int i = 0; i < _headerRowsToSkip; i++)
                     csvReader.ReadNextRecord();
 
-                SqlBulkCopy bc = new SqlBulkCopy(targetConn);
-                bc.DestinationTableName = _targetTable;
-                bc.BatchSize = _batchSize;
-                bc.BulkCopyTimeout = 1800;
-                bc.NotifyAfter = _batchSize;
+                SqlBulkCopy bc = new SqlBulkCopy(targetConn)
+                {
+                    DestinationTableName = _targetTable,
+                    BatchSize = _batchSize,
+                    BulkCopyTimeout = 1800,
+                    NotifyAfter = _batchSize
+                };
                 bc.SqlRowsCopied += new SqlRowsCopiedEventHandler(OnSqlRowsCopied);
                 bc.WriteToServer(csvReader);
             }

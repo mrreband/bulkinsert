@@ -11,6 +11,7 @@ namespace BulkInsert
     public class BulkInsertRequest
     {
         private string InputFilePath { get; set; }
+        private string FileExtensionOverride { get; set; }
         private string Delimiter { get; set; }
         private string TargetServer { get; set; }
         private string TargetDatabase { get; set; }
@@ -36,7 +37,7 @@ namespace BulkInsert
         {
             this.InputFilePath = inputFilePath;
             this.Delimiter = delimiter;
-            this.TargetServer = targetSchema;
+            this.TargetServer = targetServer;
             this.TargetDatabase = targetDatabase;
             this.TargetSchema = targetSchema;
             this.TargetTable = targetTable;
@@ -58,8 +59,9 @@ namespace BulkInsert
         public BulkInsertRequest(Dictionary<string, string> bulkLoadParameters, string targetConnectionString)
         {
             this.InputFilePath = bulkLoadParameters["InputFilePath"];
+            this.FileExtensionOverride = bulkLoadParameters["FileExtensionOverride"].ToLower();
             this.Delimiter = bulkLoadParameters["Delimiter"];
-            this.TargetServer = bulkLoadParameters["TargetSchema"];
+            this.TargetServer = bulkLoadParameters["TargetServer"];
             this.TargetDatabase = bulkLoadParameters["TargetDatabase"];
             this.TargetSchema = bulkLoadParameters["TargetSchema"];
             this.TargetTable = bulkLoadParameters["TargetTable"];
@@ -86,13 +88,17 @@ namespace BulkInsert
             if (!File.Exists(InputFilePath))
                 throw new FileNotFoundException(string.Format("Input File {0} was not found", InputFilePath));
 
-            var fileExtension = Path.GetExtension(InputFilePath).ToLower().Replace(".", "");
+            var fileExtension = (this.FileExtensionOverride != "" ) 
+                ? this.FileExtensionOverride 
+                : Path.GetExtension(InputFilePath).ToLower().Replace(".", "");
+
+            var allowedExtensions = new List<String>() { "csv", "xlsx", "sas7bdat", "tab" };
             if (fileExtension == "zip")
             {
                 InputFilePath = UnzipFile(InputFilePath);
                 fileExtension = Path.GetExtension(InputFilePath).ToLower().Replace(".", "");
             }
-            else if (!(fileExtension == "csv" || fileExtension == "xlsx" || fileExtension == "sas7bdat" || fileExtension == "tab" || fileExtension == "xml"))
+            else if (! allowedExtensions.Contains(fileExtension))
                 throw new NotImplementedException("Only csv, xlsx, xml, sas7bdat files are supported");
 
             var localFolderPath = GetValidAceDbFileName(Path.GetFileNameWithoutExtension(InputFilePath));

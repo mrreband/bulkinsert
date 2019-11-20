@@ -106,6 +106,13 @@ namespace BulkInsertClass
                 return Convert.ToInt32(rcCmd.ExecuteScalar().ToString());
         }
 
+        protected void ApplyDataTypes(SqlConnection targetConn, string targetTable)
+        {
+            using (var rcCmd = new SqlCommand(string.Format(@"  exec sp_suggestdatatypes '{0}';
+                                                                exec sp_applydatatypesuggestions '{0}'", targetTable), targetConn))
+                rcCmd.ExecuteNonQuery();
+        }
+
         protected void CreateDestinationTable(SqlConnection targetConnection)
         {
             var tableExists = false;

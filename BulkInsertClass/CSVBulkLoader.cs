@@ -25,8 +25,8 @@ namespace BulkInsertClass
         private string _fileTableName;
         private string _inputFileSelectQuery;
 
-        public CSVBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char QuoteIdentifier = '"', char EscapeCharacter = '"')
-            : base(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, nullValue, comments, schemaPath, columnFilter)
+        public CSVBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char QuoteIdentifier = '"', char EscapeCharacter = '"')
+            : base(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter)
         {
             _schemaPath = schemaPath;
             _quoteIdentifier = QuoteIdentifier;
@@ -57,9 +57,8 @@ namespace BulkInsertClass
                 
                 _transferFinish = DateTime.Now;
                 _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
-                ApplyDataTypes(targetConn, _targetTable);
-                //LogImport(targetConn);
 
+                ApplyDataTypes(targetConn, _targetTable);
                 Nullify(targetConn, _targetTable, _nullValue);
             }
         }
@@ -100,7 +99,7 @@ namespace BulkInsertClass
                     inputFile.Close();
                     foreach (var headerColumn in headerRow.Split(Delimiter))
                     {
-                        TargetColumns.Add(new Column() { Name = headerColumn.Replace("\"", ""), DataType = "varchar", MaxLength = _defaultColumnWidth, IsNullable = false });
+                        TargetColumns.Add(new Column() { Name = headerColumn.Replace("\"", ""), DataType = "varchar", MaxLength = _defaultColumnWidth, IsNullable = _allowNulls });
                     }
                 }
 

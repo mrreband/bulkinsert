@@ -23,6 +23,7 @@ namespace BulkInsertClass
         protected int _batchSize;
         protected int _headerRowsToSkip;
         protected bool _useHeaderRow;
+        protected bool _allowNulls;
 
         //For building SQL Statements and binding columns
         protected List<Column> TargetColumns;
@@ -40,7 +41,7 @@ namespace BulkInsertClass
         protected DateTime _transferFinish;
         protected string _comments;
 
-        public BulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "")
+        public BulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "")
         {
             InputFilePath = inputFilePath;
             Delimiter = (delimiter == "\\t") ? '\t' : delimiter.ToCharArray()[0];
@@ -56,6 +57,7 @@ namespace BulkInsertClass
             _sqlConnectionString = sqlConnectionString;
             _defaultColumnWidth = DefaultColumnWidth;
             _comments = (comments == "") ? "Load from BulkLoader" : comments + " (from BulkLoader)";
+            _allowNulls = allowNulls;
             TargetColumns = new List<Column>();
             
             if (columnFilter != "")
@@ -145,7 +147,7 @@ namespace BulkInsertClass
                 foreach (var column in TargetColumns)
                 {
                     var length = (column.MaxLength == -1) ? "MAX" : column.MaxLength.ToString();
-                    createTableSql += string.Format("{0} varchar({1}) {2},", GetSqlName(column.Name), length, (column.IsNullable ? "NULL" : "NOT NULL"));
+                    createTableSql += string.Format("{0} varchar({1}) {2},", GetSqlName(column.Name), length, (column.IsNullable || _allowNulls ? "NULL" : "NOT NULL"));
                     i++;
                     if (i >= 1024)
                     {

@@ -33,7 +33,7 @@ namespace BulkInsert
         private string NullValue { get; set; }
         private string TargetConnectionString { get; set; }
 
-        public BulkInsertRequest(string inputFilePath, string delimiter, string targetServer, string targetDatabase, string targetSchema, string targetTable, bool useHeader, int headerRowsToSkip, bool copyLocal, bool overwrite, bool append, int defaultColumnWidth, 
+        public BulkInsertRequest(string inputFilePath, string delimiter, string targetServer, string targetDatabase, string targetSchema, string targetTable, bool useHeader, int headerRowsToSkip, bool copyLocal, bool overwrite, bool append, int defaultColumnWidth,
             int batchSize, string comments, string schemaPath, string columnFilter, char quoteIdentifier, char escapeCharacter, bool allowNulls, string nullValue)
         {
             this.InputFilePath = inputFilePath;
@@ -91,8 +91,8 @@ namespace BulkInsert
             if (!File.Exists(InputFilePath))
                 throw new FileNotFoundException(string.Format("Input File {0} was not found", InputFilePath));
 
-            var fileExtension = (this.FileExtensionOverride != "" ) 
-                ? this.FileExtensionOverride 
+            var fileExtension = (this.FileExtensionOverride != "")
+                ? this.FileExtensionOverride
                 : Path.GetExtension(InputFilePath).ToLower().Replace(".", "");
 
             var allowedExtensions = new List<String>() { "csv", "xlsx", "sas7bdat", "tab", "xml" };
@@ -101,10 +101,10 @@ namespace BulkInsert
                 InputFilePath = UnzipFile(InputFilePath);
                 fileExtension = Path.GetExtension(InputFilePath).ToLower().Replace(".", "");
             }
-            else if (! allowedExtensions.Contains(fileExtension))
+            else if (!allowedExtensions.Contains(fileExtension))
                 throw new NotImplementedException("Only csv, xlsx, xml, sas7bdat files are supported");
 
-            var localFolderPath = GetValidAceDbFileName(Path.GetFileNameWithoutExtension(InputFilePath));
+            var localFolderPath = System.IO.Path.GetTempPath();
 
             var localFilePath = InputFilePath;
             if (CopyLocal)

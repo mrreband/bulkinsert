@@ -147,7 +147,7 @@ namespace BulkInsertClass
                 foreach (var column in TargetColumns)
                 {
                     var length = (column.MaxLength == -1) ? "MAX" : column.MaxLength.ToString();
-                    createTableSql += string.Format("{0} varchar({1}) {2},", GetSqlName(column.Name), length, (column.IsNullable || _allowNulls ? "NULL" : "NOT NULL"));
+                    createTableSql += string.Format("{0} nvarchar({1}) {2},", GetSqlName(column.Name), length, (column.IsNullable || _allowNulls ? "NULL" : "NOT NULL"));
                     i++;
                     if (i >= 1024)
                     {

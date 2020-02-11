@@ -58,7 +58,7 @@ namespace BulkInsertClass
                 _transferFinish = DateTime.Now;
                 _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
 
-                ApplyDataTypes(targetConn, _targetTable);
+                // ApplyDataTypes(targetConn, _targetTable);
                 Nullify(targetConn, _targetTable, _nullValue);
             }
         }

@@ -9,6 +9,12 @@ namespace BatchLoader
 {
     class Program
     {
+        static bool isSupportedFile(String filePath) {
+            var supportedExtensions = new List<string> { ".XLSX", ".XLS", ".CSV", ".TAB", ".SAS", ".XML" };
+            var fileExtension = Path.GetExtension(filePath).ToUpper();
+            return supportedExtensions.Contains(fileExtension);
+        }
+
         static void Main(string[] args)
         {
             var bulkLoadParameters = GetDefaultParameters(args);
@@ -20,7 +26,7 @@ namespace BatchLoader
             var maxDOP = Convert.ToInt32(ConfigurationManager.AppSettings["MaxDOP"].ToString());
             maxDOP = (maxDOP < 1) ? 1 : (maxDOP > 8) ? 8 : maxDOP;
 
-            var inputFilePaths = Directory.GetFiles(inputFolder).ToList();
+            var inputFilePaths = Directory.GetFiles(inputFolder).Where(x => isSupportedFile(x) == true).ToList();
             ProcessFiles(inputFilePaths, bulkLoadParameters, targetConnectionString, maxDOP);
 
             Console.WriteLine("done");
@@ -41,6 +47,7 @@ namespace BatchLoader
                     }
                     catch (Exception ex)
                     {
+                        Console.WriteLine("error: " + inputFilePath + ": " + ex.Message + " at " + ex.StackTrace);
                         var errLog = new StreamWriter("err.log", false);
                         errLog.WriteLine(inputFilePath + ": " + ex.Message + " at " + ex.StackTrace);
                         errLog.Close();

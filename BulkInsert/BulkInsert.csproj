@@ -15,6 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="alphabet.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ConnectionStrings.config" CopyToOutputDirectory="PreserveNewest" />
     <None Update="alphabet.csv" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

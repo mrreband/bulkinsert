@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
@@ -42,7 +43,7 @@ namespace BulkInsertClass
 
                 _transferFinish = DateTime.Now;
                 _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
-                LogImport(targetConn);
+                // LogImport(targetConn);
 
                 Nullify(targetConn, _targetTable, _nullValue);
             }
@@ -92,7 +93,7 @@ namespace BulkInsertClass
             {
                 oleDbConnection.Open();
 
-                _fileTableName = oleDbConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null).Rows[0]["TABLE_NAME"].ToString();
+                _fileTableName = oleDbConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null).Rows[0]["TABLE_NAME"].ToString().Replace("'", "");
                 GetXlsInputColumns();
 
                 using (var cmd = new OleDbCommand(_inputFileSelectQuery, oleDbConnection))

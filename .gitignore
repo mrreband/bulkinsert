@@ -10,6 +10,7 @@
 *.userosscache
 *.sln.docstates
 ConnectionStrings.config
+App.config
 
 bin/
 obj/

@@ -40,6 +40,7 @@ namespace BulkInsertClass
                 GetXlsInputColumns();
                 CreateDestinationTable(targetConn);
                 LoadTable_SQLBulkCopy(targetConn);
+                //ApplyDataTypes(targetConn, _targetTable);
 
                 _transferFinish = DateTime.Now;
                 _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
@@ -68,6 +69,8 @@ namespace BulkInsertClass
                 string[] selectedColumns = new[] { "COLUMN_NAME", "ORDINAL_POSITION" };
                 DataTable allColumnNames = new DataView(schema).ToTable(false, selectedColumns);
                 DataTable distinctColumnNames = allColumnNames.DefaultView.ToTable( /*distinct*/ true);
+                distinctColumnNames.DefaultView.Sort = "ORDINAL_POSITION";
+                distinctColumnNames = distinctColumnNames.DefaultView.ToTable();
 
                 foreach (DataRow c in distinctColumnNames.Rows)
                     TargetColumns.Add(new Column() { Name = c["COLUMN_NAME"].ToString(), DataType = "varchar", MaxLength = _defaultColumnWidth, IsNullable = true });

@@ -24,6 +24,7 @@ namespace BulkInsertClass
         protected int _headerRowsToSkip;
         protected bool _useHeaderRow;
         protected bool _allowNulls;
+        protected string _schemaPath;
 
         //For building SQL Statements and binding columns
         protected List<Column> TargetColumns;
@@ -58,6 +59,7 @@ namespace BulkInsertClass
             _defaultColumnWidth = DefaultColumnWidth;
             _comments = (comments == "") ? "Load from BulkLoader" : comments + " (from BulkLoader)";
             _allowNulls = allowNulls;
+            _schemaPath = schemaPath;
             TargetColumns = new List<Column>();
             
             if (columnFilter != "")
@@ -122,7 +124,7 @@ namespace BulkInsertClass
             {
                 tableExistsCmd.CommandType = CommandType.Text;
                 tableExistsCmd.Parameters.AddWithValue("@targetTable", _targetTable);
-                tableExists = ((int)tableExistsCmd.ExecuteScalar() == -1) ? false : true;
+                tableExists = (int)tableExistsCmd.ExecuteScalar() != -1;
             }
 
             ///////////////////////////////////////////////////////////////////////////

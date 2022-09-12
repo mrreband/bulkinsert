@@ -9,9 +9,14 @@ namespace BulkInsertClass
 {
     public static class BulkLoaderFactory
     {
+        public static List<string> GetSupportedExtensions()
+        {
+            return new List<string> { ".XLSX", ".XLS", ".CSV", ".TAB", ".SAS", ".XML" };
+        }
+
         public static IBulkLoader GetBulkLoader(string bulkLoaderType, string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char quoteIdentifier = '"', char escapeCharacter = '"')
         {
-            IBulkLoader bulkLoader = null;
+            IBulkLoader bulkLoader;
             switch (bulkLoaderType.ToUpper())
             {
                 case "CSV":  case "TAB":
@@ -27,7 +32,7 @@ namespace BulkInsertClass
                     bulkLoader = new XMLBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter);
                     break;
                 default:
-                    throw new ArgumentException("Invalid Repository Type");
+                    throw new ArgumentException("Invalid bulkLoaderType");
             }
             
             return bulkLoader;

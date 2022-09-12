@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Configuration;
+using BulkInsertClass;
 
 namespace BatchLoader
 {
     class Program
     {
-        static bool isSupportedFile(String filePath) {
-            var supportedExtensions = new List<string> { ".XLSX", ".XLS", ".CSV", ".TAB", ".SAS", ".XML" };
+        static bool IsSupportedFile(String filePath) {
+            var supportedExtensions = BulkLoaderFactory.GetSupportedExtensions();
             var fileExtension = Path.GetExtension(filePath).ToUpper();
             return supportedExtensions.Contains(fileExtension);
         }
@@ -26,7 +27,7 @@ namespace BatchLoader
             var maxDOP = Convert.ToInt32(ConfigurationManager.AppSettings["MaxDOP"].ToString());
             maxDOP = (maxDOP < 1) ? 1 : (maxDOP > 8) ? 8 : maxDOP;
 
-            var inputFilePaths = Directory.GetFiles(inputFolder).Where(x => isSupportedFile(x) == true).ToList();
+            var inputFilePaths = Directory.GetFiles(inputFolder).Where(x => IsSupportedFile(x) == true).ToList();
             ProcessFiles(inputFilePaths, bulkLoadParameters, targetConnectionString, maxDOP);
 
             Console.WriteLine("done");

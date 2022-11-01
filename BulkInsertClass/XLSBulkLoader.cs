@@ -15,15 +15,19 @@ namespace BulkInsertClass
 {
     public class XLSBulkLoader : BulkLoader, IBulkLoader
     {
+        private string _sheetName;
+        private Dictionary<string, string> _targetTables = new Dictionary<string, string>();
+
         //Input file connection stuff
         private string _oleDbConnectionString;
         private string _fileTableName;
         private string _inputFileSelectQuery;
 
-        public XLSBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "")
+        public XLSBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", string sheetName = "")
             : base(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter)
         {
-            SetTargetTable();
+            _sheetName = sheetName;
+            SetTargetTables();
             SetOledbConnectionString();
         }
 
@@ -48,6 +52,51 @@ namespace BulkInsertClass
 
                 Nullify(targetConn, _targetTable, _nullValue);
             }
+        }
+
+        protected void SetTargetTables()
+        {
+            if (_sheetName != "")
+            {
+                // only load the worksheet with the name specified
+                if (!_targetTable.Contains(".") && _targetSchema != "")
+                {
+                    _targetTable = _targetSchema + "." + _targetTable;
+                }
+                else {
+                    _targetTable = GetWorksheetTableName(_sheetName);
+                }
+                _targetTables[_sheetName] = _targetTable;
+            }
+            else {
+                // get all worksheet names and add them as separate target tables
+                var worksheetNames = GetWorksheetNames();
+                foreach (var worksheetName in worksheetNames) {
+                    _targetTables[worksheetName] = GetWorksheetTableName(worksheetName);
+                }
+            }
+        }
+
+        private string GetWorksheetTableName(string worksheetName) {
+            return _targetSchema + ".[" + worksheetName + "]";
+        }
+
+        public List<string> GetWorksheetNames()
+        {
+            List<string> sheets = new List<string>();
+            using (OleDbConnection connection = new OleDbConnection(_oleDbConnectionString))
+            {
+                connection.Open();
+                DataTable dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                foreach (DataRow drSheet in dt.Rows)
+                    if (drSheet["TABLE_NAME"].ToString().Contains("$"))
+                    {
+                        string s = drSheet["TABLE_NAME"].ToString();
+                        sheets.Add(s.StartsWith("'") ? s.Substring(1, s.Length - 3) : s.Substring(0, s.Length - 1));
+                    }
+                connection.Close();
+            }
+            return sheets;
         }
 
         private void SetOledbConnectionString()

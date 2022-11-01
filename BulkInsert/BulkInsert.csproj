@@ -18,6 +18,9 @@
     <None Update="alphabet.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ConnectionStrings.config" CopyToOutputDirectory="PreserveNewest" />
     <None Update="alphabet.csv" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

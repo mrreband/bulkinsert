@@ -32,6 +32,8 @@ namespace BulkInsert
         private bool AllowNulls { get; set; }
         private string NullValue { get; set; }
         private string TargetConnectionString { get; set; }
+        
+        private string SheetName { get; set;  }
 
         public BulkInsertRequest(string inputFilePath, string delimiter, string targetServer, string targetDatabase, string targetSchema, string targetTable, bool useHeader, int headerRowsToSkip, bool copyLocal, bool overwrite, bool append, int defaultColumnWidth,
             int batchSize, string comments, string schemaPath, string columnFilter, char quoteIdentifier, char escapeCharacter, bool allowNulls, string nullValue)
@@ -81,6 +83,7 @@ namespace BulkInsert
             this.EscapeCharacter = bulkLoadParameters["EscapeCharacter"].ToCharArray()[0];
             this.AllowNulls = Convert.ToBoolean(bulkLoadParameters["AllowNulls"]);
             this.NullValue = bulkLoadParameters["NullValue"];
+            this.SheetName = bulkLoadParameters["SheetName"];
 
             this.TargetConnectionString = targetConnectionString;
             SetTargetConnectionString(TargetConnectionString);
@@ -102,7 +105,7 @@ namespace BulkInsert
                 fileExtension = Path.GetExtension(InputFilePath).ToLower().Replace(".", "");
             }
             else if (!allowedExtensions.Contains(fileExtension))
-                throw new NotImplementedException("Only csv, xlsx, xml, sas7bdat files are supported");
+            throw new NotImplementedException("Only csv, xlsx, xml, sas7bdat files are supported"); 
 
             var localFolderPath = System.IO.Path.GetTempPath();
 
@@ -115,7 +118,7 @@ namespace BulkInsert
                 CopyFileForReadWrite(InputFilePath, localFilePath);
             }
 
-            var bl = BulkLoaderFactory.GetBulkLoader(fileExtension, localFilePath, Delimiter, TargetDatabase, TargetSchema, TargetTable, Convert.ToBoolean(UseHeader), Convert.ToInt32(HeaderRowsToSkip), Convert.ToBoolean(Overwrite), Convert.ToBoolean(Append), Convert.ToInt32(BatchSize), TargetConnectionString, Convert.ToInt32(DefaultColumnWidth), Convert.ToBoolean(AllowNulls), NullValue, Comments, SchemaPath, ColumnFilter, QuoteIdentifier, EscapeCharacter);
+            var bl = BulkLoaderFactory.GetBulkLoader(fileExtension, localFilePath, Delimiter, TargetDatabase, TargetSchema, TargetTable, Convert.ToBoolean(UseHeader), Convert.ToInt32(HeaderRowsToSkip), Convert.ToBoolean(Overwrite), Convert.ToBoolean(Append), Convert.ToInt32(BatchSize), TargetConnectionString, Convert.ToInt32(DefaultColumnWidth), Convert.ToBoolean(AllowNulls), NullValue, Comments, SchemaPath, ColumnFilter, QuoteIdentifier, EscapeCharacter, SheetName);
 
             bl.Notifier += Notify;
             bl.LoadToSql();

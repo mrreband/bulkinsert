@@ -14,7 +14,7 @@ namespace BulkInsertClass
             return new List<string> { ".XLSX", ".XLS", ".CSV", ".TAB", ".SAS", ".XML" };
         }
 
-        public static IBulkLoader GetBulkLoader(string bulkLoaderType, string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char quoteIdentifier = '"', char escapeCharacter = '"')
+        public static IBulkLoader GetBulkLoader(string bulkLoaderType, string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char quoteIdentifier = '"', char escapeCharacter = '"', string sheetName = "")
         {
             IBulkLoader bulkLoader;
             switch (bulkLoaderType.ToUpper())
@@ -23,7 +23,7 @@ namespace BulkInsertClass
                     bulkLoader = new CSVBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter, quoteIdentifier, escapeCharacter);
                     break;
                 case "XLSX": case "XLS":
-                    bulkLoader = new XLSBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter);
+                    bulkLoader = new XLSBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter, sheetName);
                     break;
                 case "SAS":
                     bulkLoader = new SASBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter);

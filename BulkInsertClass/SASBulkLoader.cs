@@ -38,7 +38,7 @@ namespace BulkInsertClass
                 _rowCountStart = (_overwrite == true) ? 0 : GetSqlRowCount(targetConn, _targetTable);
 
                 _fileTableName = Path.GetFileName(InputFilePath);
-                CreateDestinationTable(targetConn);
+                CreateDestinationTable(targetConn, _targetTable);
 
                 LoadTable_SQLBulkCopy(targetConn);
                 

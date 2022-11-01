@@ -48,7 +48,7 @@ namespace BulkInsertClass
 
                 _fileTableName = Path.GetFileName(InputFilePath);
                 GetTextFileInputColumns();
-                CreateDestinationTable(targetConn);
+                CreateDestinationTable(targetConn, _targetTable);
 
                 if (TargetColumns.Count <= 255)
                     LoadTable_SQLBulkCopy_Csv(targetConn);

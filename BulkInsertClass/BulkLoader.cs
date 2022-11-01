@@ -117,13 +117,13 @@ namespace BulkInsertClass
                 rcCmd.ExecuteNonQuery();
         }
 
-        protected void CreateDestinationTable(SqlConnection targetConnection)
+        protected void CreateDestinationTable(SqlConnection targetConnection, string targetTable)
         {
             var tableExists = false;
             using (var tableExistsCmd = new SqlCommand("SELECT ISNULL(OBJECT_ID(@targetTable,'U'), -1)", targetConnection))
             {
                 tableExistsCmd.CommandType = CommandType.Text;
-                tableExistsCmd.Parameters.AddWithValue("@targetTable", _targetTable);
+                tableExistsCmd.Parameters.AddWithValue("@targetTable", targetTable);
                 tableExists = (int)tableExistsCmd.ExecuteScalar() != -1;
             }
 
@@ -134,8 +134,8 @@ namespace BulkInsertClass
                 //drop existing table if applicable
                 if (tableExists && _overwrite)  
                 {
-                    Notify(string.Format("Dropping existing table {0}", _targetTable));
-                    var dropTableSyntax = string.Format("DROP TABLE {0}", _targetTable);
+                    Notify(string.Format("Dropping existing table {0}", targetTable));
+                    var dropTableSyntax = string.Format("DROP TABLE {0}", targetTable);
                     using (var dropTableCmd = new SqlCommand(dropTableSyntax, targetConnection))
                     {
                         dropTableCmd.ExecuteNonQuery();
@@ -143,8 +143,8 @@ namespace BulkInsertClass
                 }
 
                 //create table sql syntax
-                Notify(string.Format("Creating Target Table {0}; Overwrite = {1}; Append = {2}", _targetTable, _overwrite, _append));
-                var createTableSql = string.Format("CREATE TABLE {0} (", _targetTable);
+                Notify(string.Format("Creating Target Table {0}; Overwrite = {1}; Append = {2}", targetTable, _overwrite, _append));
+                var createTableSql = string.Format("CREATE TABLE {0} (", targetTable);
                 int i = 1;
                 foreach (var column in TargetColumns)
                 {
@@ -165,7 +165,7 @@ namespace BulkInsertClass
             }
 
             if (tableExists && !_overwrite && !_append)
-                throw new Exception(string.Format("Table {0} Already Exists -- use overwrite flag to overwrite or append flag to append", _targetTable));
+                throw new Exception(string.Format("Table {0} Already Exists -- use overwrite flag to overwrite or append flag to append", targetTable));
 
             ////for completeness: 
             ////if (tableExists && !overwrite && append)

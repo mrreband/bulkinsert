@@ -26,9 +26,12 @@ namespace BulkInsertClass
         public XLSBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", string sheetName = "")
             : base(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter)
         {
+            // _targetTable was set in the base class but we don't want that
+            _targetTable = targetTable;
             _sheetName = sheetName;
-            SetTargetTables();
+
             SetOledbConnectionString();
+            SetTargetTables();
         }
 
         public override void LoadToSql()
@@ -38,19 +41,23 @@ namespace BulkInsertClass
                 targetConn.Open();
                 targetConn.ChangeDatabase(_targetDatabase);
 
-                _transferStart = DateTime.Now;
-                _rowCountStart = (_overwrite == true) ? 0 : GetSqlRowCount(targetConn, _targetTable);
+                foreach (string sheetName in _targetTables.Keys) {
+                    string targetTable = _targetTables[sheetName];
 
-                GetXlsInputColumns();
-                CreateDestinationTable(targetConn);
-                LoadTable_SQLBulkCopy(targetConn);
-                //ApplyDataTypes(targetConn, _targetTable);
+                    _transferStart = DateTime.Now;
+                    _rowCountStart = (_overwrite == true) ? 0 : GetSqlRowCount(targetConn, targetTable);
 
-                _transferFinish = DateTime.Now;
-                _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
-                // LogImport(targetConn);
+                    GetXlsInputColumns(sheetName);
+                    CreateDestinationTable(targetConn, targetTable);
+                    LoadTable_SQLBulkCopy(targetConn, sheetName, targetTable);
+                    //ApplyDataTypes(targetConn, _targetTable);
 
-                Nullify(targetConn, _targetTable, _nullValue);
+                    _transferFinish = DateTime.Now;
+                    _rowCountFinish = GetSqlRowCount(targetConn, targetTable);
+                    // LogImport(targetConn);
+
+                    Nullify(targetConn, targetTable, _nullValue);
+                }
             }
         }
 
@@ -59,7 +66,7 @@ namespace BulkInsertClass
             if (_sheetName != "")
             {
                 // only load the worksheet with the name specified
-                if (!_targetTable.Contains(".") && _targetSchema != "")
+                if (_targetTable != "" && !_targetTable.Contains(".") && _targetSchema != "")
                 {
                     _targetTable = _targetSchema + "." + _targetTable;
                 }
@@ -105,18 +112,23 @@ namespace BulkInsertClass
             _oleDbConnectionString = "Provider=Microsoft.Ace.OLEDB.12.0;Data Source='" + InputFilePath + "';Extended Properties='Excel 12.0;IMEX=1;HDR=No';";
         }
 
-        private void GetXlsInputColumns()
+        private void GetXlsInputColumns(string sheetName)
         {
             using (var oleDbConnection = new OleDbConnection(_oleDbConnectionString.Replace("HDR=No", "HDR=Yes")))
             {
                 oleDbConnection.Open();
+                TargetColumns.Clear();
 
                 _inputFileSelectQuery = "SELECT ";
                 var schema = oleDbConnection.GetSchema(SqlClientMetaDataCollectionNames.Columns);
                 schema.DefaultView.Sort = "ORDINAL_POSITION ASC";
 
                 string[] selectedColumns = new[] { "COLUMN_NAME", "ORDINAL_POSITION" };
-                DataTable allColumnNames = new DataView(schema).ToTable(false, selectedColumns);
+                
+                DataTable allColumns = new DataView(schema).ToTable(false);
+                allColumns.DefaultView.RowFilter = String.Format("TABLE_NAME = '{0}$'", sheetName);
+
+                DataTable allColumnNames = allColumns.DefaultView.ToTable(false, selectedColumns);
                 DataTable distinctColumnNames = allColumnNames.DefaultView.ToTable( /*distinct*/ true);
                 distinctColumnNames.DefaultView.Sort = "ORDINAL_POSITION";
                 distinctColumnNames = distinctColumnNames.DefaultView.ToTable();
@@ -138,15 +150,15 @@ namespace BulkInsertClass
             }
         }
 
-        private void LoadTable_SQLBulkCopy(SqlConnection targetConn)
+        private void LoadTable_SQLBulkCopy(SqlConnection targetConn, string sheetName, string targetTable)
         {
-            Notify("Starting BulkCopy_Xls");
+            Notify(String.Format("Starting BulkCopy_Xls - {0} --> {1}", sheetName, targetTable));
             using (var oleDbConnection = new OleDbConnection(_oleDbConnectionString))
             {
                 oleDbConnection.Open();
 
                 _fileTableName = oleDbConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null).Rows[0]["TABLE_NAME"].ToString().Replace("'", "");
-                GetXlsInputColumns();
+                GetXlsInputColumns(sheetName);
 
                 using (var cmd = new OleDbCommand(_inputFileSelectQuery, oleDbConnection))
                 {
@@ -159,7 +171,7 @@ namespace BulkInsertClass
                         data.Read();        //when we read from the source, we keep the colnames in the first row to force all columns to be varchar datatype
 
                     SqlBulkCopy bc = new SqlBulkCopy(targetConn);
-                    bc.DestinationTableName = _targetTable;
+                    bc.DestinationTableName = targetTable;
                     bc.BatchSize = _batchSize;
                     bc.BulkCopyTimeout = 600;
                     bc.NotifyAfter = _batchSize;

@@ -39,7 +39,7 @@ namespace BulkInsertClass
 
                 _fileTableName = Path.GetFileName(InputFilePath);
                 GetXMLColumns();
-                CreateDestinationTable(targetConn);
+                CreateDestinationTable(targetConn, _targetTable);
                 LoadTable_SQLBulkCopy_Xml(targetConn);
                 
                 _transferFinish = DateTime.Now;

@@ -96,11 +96,13 @@ namespace BulkInsertClass
                 connection.Open();
                 DataTable dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
                 foreach (DataRow drSheet in dt.Rows)
-                    if (drSheet["TABLE_NAME"].ToString().Contains("$"))
+                {
+                    string s = drSheet["TABLE_NAME"].ToString();
+                    if (s.Contains("$") && s.EndsWith("$'"))
                     {
-                        string s = drSheet["TABLE_NAME"].ToString();
                         sheets.Add(s.StartsWith("'") ? s.Substring(1, s.Length - 3) : s.Substring(0, s.Length - 1));
                     }
+                }
                 connection.Close();
             }
             return sheets;
@@ -120,14 +122,18 @@ namespace BulkInsertClass
                 TargetColumns.Clear();
 
                 _inputFileSelectQuery = "SELECT ";
-                var schema = oleDbConnection.GetSchema(SqlClientMetaDataCollectionNames.Columns);
+                String[] tableRestrictions = new String[4];
+                tableRestrictions[2] = String.Format("'{0}$'", sheetName);
+
+                var tableSchema = oleDbConnection.GetSchema(SqlClientMetaDataCollectionNames.Tables);
+                var tableData = tableSchema.DefaultView.ToTable();
+
+                var schema = oleDbConnection.GetSchema(SqlClientMetaDataCollectionNames.Columns, tableRestrictions);
                 schema.DefaultView.Sort = "ORDINAL_POSITION ASC";
 
                 string[] selectedColumns = new[] { "COLUMN_NAME", "ORDINAL_POSITION" };
                 
                 DataTable allColumns = new DataView(schema).ToTable(false);
-                allColumns.DefaultView.RowFilter = String.Format("TABLE_NAME = '{0}$'", sheetName);
-
                 DataTable allColumnNames = allColumns.DefaultView.ToTable(false, selectedColumns);
                 DataTable distinctColumnNames = allColumnNames.DefaultView.ToTable( /*distinct*/ true);
                 distinctColumnNames.DefaultView.Sort = "ORDINAL_POSITION";

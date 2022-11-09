@@ -27,7 +27,10 @@ namespace BatchLoader
             var maxDOP = Convert.ToInt32(ConfigurationManager.AppSettings["MaxDOP"].ToString());
             maxDOP = (maxDOP < 1) ? 1 : (maxDOP > 8) ? 8 : maxDOP;
 
-            var inputFilePaths = Directory.GetFiles(inputFolder).Where(x => IsSupportedFile(x) == true).ToList();
+            var inputFilePaths = Directory.GetFiles(inputFolder).ToList();
+            if (bulkLoadParameters.GetValueOrDefault("fileExtensionOverride") == "") {
+                inputFilePaths = Directory.GetFiles(inputFolder).Where(x => IsSupportedFile(x) == true).ToList();
+            }
             ProcessFiles(inputFilePaths, bulkLoadParameters, targetConnectionString, maxDOP);
 
             Console.WriteLine("done");
@@ -42,8 +45,9 @@ namespace BatchLoader
                 {
                     try
                     {
-                        bulkLoadParameters["InputFilePath"] = inputFilePath;
-                        var bulkLoadRequest = new BulkInsert.BulkInsertRequest(bulkLoadParameters, targetConnectionString);
+                        var newDictionary = bulkLoadParameters.ToDictionary(entry => entry.Key, entry => entry.Value);
+                        newDictionary["InputFilePath"] = inputFilePath;
+                        var bulkLoadRequest = new BulkInsert.BulkInsertRequest(newDictionary, targetConnectionString);
                         bulkLoadRequest.ProcessRequest();
                     }
                     catch (Exception ex)

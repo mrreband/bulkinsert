@@ -21,6 +21,7 @@ namespace BulkInsert
             bulkLoadRequest.ProcessRequest();
 
             Console.WriteLine("done");
+            Environment.Exit(0);
         }
 
         static Dictionary<string, string> GetDefaultParameters(string[] args)

@@ -85,7 +85,7 @@ namespace BulkInsertClass
         }
 
         private string GetWorksheetTableName(string worksheetName) {
-            return _targetSchema + ".[" + worksheetName + "]";
+            return _targetSchema + ".[" + worksheetName.Replace(" ", "_") + "]";
         }
 
         public List<string> GetWorksheetNames()

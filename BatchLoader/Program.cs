@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Configuration;
 using BulkInsertClass;
+using Newtonsoft.Json.Linq;
 
 namespace BatchLoader
 {
@@ -25,22 +26,22 @@ namespace BatchLoader
             var maxDOP = Convert.ToInt32(ConfigurationManager.AppSettings["MaxDOP"].ToString());
             maxDOP = (maxDOP < 1) ? 1 : (maxDOP > 8) ? 8 : maxDOP;
 
-            var inputFilePaths = getInputFiles(bulkLoadParameters);
+            var inputFilePaths = GetInputFiles(bulkLoadParameters);
             ProcessFiles(inputFilePaths, bulkLoadParameters, targetConnectionString, maxDOP);
 
             Console.WriteLine("done");
         }
 
-        static List<String> getInputFiles(Dictionary<string, string> bulkLoadParameters) {
+        static List<String> GetInputFiles(Dictionary<string, string> bulkLoadParameters) {
             var inputFolder = bulkLoadParameters["InputFolder"];
-            var recursive = Convert.ToBoolean(bulkLoadParameters["Recursive"]);
-            var copyLocal = Convert.ToBoolean(bulkLoadParameters["CopyLocal"]);
+            var fileFilter = bulkLoadParameters.TryGetValue("FileFilter", out var value) ? value : "*";
+            var recursive = bulkLoadParameters.TryGetValue("Recursive", out var _recursive) ? Convert.ToBoolean(_recursive): false;
             var fileExtensionOverride = bulkLoadParameters["FileExtensionOverride"];
 
             var enumerationOptions = new EnumerationOptions();
             enumerationOptions.RecurseSubdirectories = recursive;
 
-            var inputFilePaths = Directory.GetFiles(inputFolder, "*", enumerationOptions).ToList();
+            var inputFilePaths = Directory.GetFiles(inputFolder, fileFilter, enumerationOptions).ToList();
             if (fileExtensionOverride == "")
             {
                 inputFilePaths = inputFilePaths.Where(x => IsSupportedFile(x) == true).ToList();

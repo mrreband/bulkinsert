@@ -19,21 +19,33 @@ namespace BatchLoader
         static void Main(string[] args)
         {
             var bulkLoadParameters = GetDefaultParameters(args);
-            var inputFolder = bulkLoadParameters["InputFolder"];
-            var copyLocal = Convert.ToBoolean(bulkLoadParameters["CopyLocal"]);
             var targetConnectionString = ConfigurationManager.ConnectionStrings["TargetConnection"].ConnectionString;
 
             //cap max degrees of parallelism between 1 and 8
             var maxDOP = Convert.ToInt32(ConfigurationManager.AppSettings["MaxDOP"].ToString());
             maxDOP = (maxDOP < 1) ? 1 : (maxDOP > 8) ? 8 : maxDOP;
 
-            var inputFilePaths = Directory.GetFiles(inputFolder).ToList();
-            if (bulkLoadParameters.GetValueOrDefault("fileExtensionOverride") == "") {
-                inputFilePaths = Directory.GetFiles(inputFolder).Where(x => IsSupportedFile(x) == true).ToList();
-            }
+            var inputFilePaths = getInputFiles(bulkLoadParameters);
             ProcessFiles(inputFilePaths, bulkLoadParameters, targetConnectionString, maxDOP);
 
             Console.WriteLine("done");
+        }
+
+        static List<String> getInputFiles(Dictionary<string, string> bulkLoadParameters) {
+            var inputFolder = bulkLoadParameters["InputFolder"];
+            var recursive = Convert.ToBoolean(bulkLoadParameters["Recursive"]);
+            var copyLocal = Convert.ToBoolean(bulkLoadParameters["CopyLocal"]);
+            var fileExtensionOverride = bulkLoadParameters["FileExtensionOverride"];
+
+            var enumerationOptions = new EnumerationOptions();
+            enumerationOptions.RecurseSubdirectories = recursive;
+
+            var inputFilePaths = Directory.GetFiles(inputFolder, "*", enumerationOptions).ToList();
+            if (fileExtensionOverride == "")
+            {
+                inputFilePaths = inputFilePaths.Where(x => IsSupportedFile(x) == true).ToList();
+            }
+            return inputFilePaths;
         }
 
         static void ProcessFiles(List<string> InputFilePaths, Dictionary<string, string> bulkLoadParameters, String targetConnectionString, int maxDOP)

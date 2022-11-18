@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulkInsertClass", "BulkInsertClass\BulkInsertClass.csproj", "{8CCB46BB-C82A-4B5C-A56D-5AEC112D3C85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulkInsertClass", "BulkInsertClass\BulkInsertClass.csproj", "{8CCB46BB-C82A-4B5C-A56D-5AEC112D3C85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulkInsert", "BulkInsert\BulkInsert.csproj", "{19C95EA2-DC04-4C77-814A-4E443ED37964}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulkInsert", "BulkInsert\BulkInsert.csproj", "{19C95EA2-DC04-4C77-814A-4E443ED37964}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BatchLoader", "BatchLoader\BatchLoader.csproj", "{8B6556E6-E505-48EB-A06C-85C52B1E6AE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BatchLoader", "BatchLoader\BatchLoader.csproj", "{8B6556E6-E505-48EB-A06C-85C52B1E6AE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,9 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8CCB46BB-C82A-4B5C-A56D-5AEC112D3C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,5 +55,11 @@ Global
 		{8B6556E6-E505-48EB-A06C-85C52B1E6AE0}.Release|x64.Build.0 = Release|Any CPU
 		{8B6556E6-E505-48EB-A06C-85C52B1E6AE0}.Release|x86.ActiveCfg = Release|Any CPU
 		{8B6556E6-E505-48EB-A06C-85C52B1E6AE0}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FDBA0BFE-E67A-4592-B0FE-F0FC1F5FF367}
 	EndGlobalSection
 EndGlobal

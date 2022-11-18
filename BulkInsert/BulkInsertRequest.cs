@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
+using BulkInsertClass;
 
 namespace BulkInsert
 {
@@ -96,15 +97,14 @@ namespace BulkInsert
 
             var fileExtension = (this.FileExtensionOverride != "")
                 ? this.FileExtensionOverride
-                : Path.GetExtension(InputFilePath).ToLower().Replace(".", "");
+                : Path.GetExtension(InputFilePath).ToUpper();
 
-            // todo: use BulkLoadFactory to get allowed extensions
-            //var supportedExtensions = BulkLoaderFactory.GetSupportedExtensions();
-            var allowedExtensions = new List<string>() { "csv", "xlsx", "sas7bdat", "tab", "xml" };
-            if (fileExtension == "zip")
+            var allowedExtensions = BulkLoaderFactory.GetSupportedExtensions();
+            
+            if (fileExtension == ".ZIP")
             {
                 InputFilePath = UnzipFile(InputFilePath);
-                fileExtension = Path.GetExtension(InputFilePath).ToLower().Replace(".", "");
+                fileExtension = Path.GetExtension(InputFilePath).ToUpper();
             }
             else if (!allowedExtensions.Contains(fileExtension))
             throw new NotImplementedException("Only csv, xlsx, xml, sas7bdat files are supported"); 

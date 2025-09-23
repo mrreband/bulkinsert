@@ -1,14 +1,8 @@
-﻿using LumenWorks.Framework.IO.Csv;
-using System;
-using System.Collections.Generic;
+﻿using CsvReader;
 using System.Data;
 using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 namespace BulkInsertClass
 {
@@ -39,7 +33,11 @@ namespace BulkInsertClass
         {
             using (var targetConn = new SqlConnection(_sqlConnectionString))
             {
+                Console.WriteLine(_sqlConnectionString);
+                Console.WriteLine(_targetDatabase);
+
                 targetConn.Open();
+
                 if (_targetDatabase != "")
                     targetConn.ChangeDatabase(_targetDatabase);
 
@@ -54,7 +52,7 @@ namespace BulkInsertClass
                     LoadTable_SQLBulkCopy_Csv(targetConn);
                 else
                     LoadTable_SQLBulkCopy_LumenWorks(targetConn);
-                
+
                 _transferFinish = DateTime.Now;
                 _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
 
@@ -66,7 +64,7 @@ namespace BulkInsertClass
         private void SetOledbConnectionString()
         {
             var parentDirectory = Path.GetDirectoryName(InputFilePath);
-            _oleDbConnectionString = "Provider=Microsoft.Ace.OLEDB.12.0;Data Source='" + parentDirectory + "';Extended Properties='text;HDR=Yes;FMT=Delimited';";
+            _oleDbConnectionString = "Provider=Microsoft.Ace.OLEDB.12.0;Data Source='" + parentDirectory + "';Extended Properties='text;HDR=Yes;FMT=Delimited;CharacterSet=65001';";
         }
 
         private async void GetTextFileInputColumns()
@@ -208,7 +206,7 @@ namespace BulkInsertClass
         private void LoadTable_SQLBulkCopy_LumenWorks(SqlConnection targetConn)
         {
             Notify("Starting BulkCopy_Csv_Lumenworks");
-            using (var csvReader = new CsvReader(new StreamReader(InputFilePath), true, Delimiter, _quoteIdentifier, _escapeCharacter, '#', ValueTrimmingOptions.All))
+            using (var csvReader = new CsvReader.CsvReader(new StreamReader(InputFilePath), true, Delimiter, _quoteIdentifier, _escapeCharacter, '#', ValueTrimmingOptions.All))
             {
                 csvReader.MissingFieldAction = MissingFieldAction.ReplaceByNull;
 

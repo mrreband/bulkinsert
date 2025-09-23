@@ -1,14 +1,6 @@
-﻿using LumenWorks.Framework.IO.Csv;
-using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 namespace BulkInsertClass
 {
@@ -41,7 +33,7 @@ namespace BulkInsertClass
                 CreateDestinationTable(targetConn, _targetTable);
 
                 LoadTable_SQLBulkCopy(targetConn);
-                
+
                 _transferFinish = DateTime.Now;
                 _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
                 LogImport(targetConn);
@@ -81,7 +73,7 @@ namespace BulkInsertClass
             var parentDirectory = Path.GetDirectoryName(InputFilePath);
             _oleDbConnectionString = "Provider=SAS Local Data Provider 9.44;Data Source='" + parentDirectory + "'";
         }
-        
+
         /// <summary>
         /// IDataReader from SAS to SQL -- reliable for files with less than 255 columns.  Microsoft.Ace.OLEDB.12.0 cannot handle any more than that.
         /// </summary>

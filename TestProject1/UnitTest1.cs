@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BulkInsertClass;
 using System;
 using System.Collections.Generic;
@@ -12,11 +12,11 @@ namespace BulkInsertClass.Tests
     [TestClass()]
     public class CSVBulkLoaderTests
     {
-        string CsvInputFilePath = @"C:\Data\Incoming\test.csv";
-        string XlsxInputFilePath = @"C:\Data\Incoming\test.xlsx";
+        string CsvInputFilePath = @"D:\Data\bulkinsert\alphabet.csv";
+        string XlsxInputFilePath = @"D:\Data\bulkinsert\alphabet.xlsx";
         string UseInputQueue = "false";
         string Delimiter = ",";
-        string TargetServer = "mpaserver35";
+        string TargetServer = "centos";
         string TargetDatabase = "RawData";
         string TargetSchema = "dbo";
         string TargetTable = "";
@@ -25,20 +25,20 @@ namespace BulkInsertClass.Tests
         bool CopyLocal = true;
         bool Overwrite = true;
         bool Append = false;
-        int DefaultColumnWidth = 1000;  
+        int DefaultColumnWidth = 1000;
         int BatchSize = 10000;
         string Comments = "testing 123";
         string SchemaPath = "";
         int MaxDOP = 2;
         string ColumnFilter = "";
         string NullValue = "''";
-        string targetConnectionString = "Data Source=mpaserver35;Initial Catalog=RawData;Integrated Security=SSPI";
+        string targetConnectionString = "Data Source=centos;Initial Catalog=RawData;uid=sa;pwd=N0cent0s;TrustServerCertificate=true";
 
         [TestMethod()]
         public void CSVBulkLoaderTest()
         {
             var bl = BulkLoaderFactory.GetBulkLoader("CSV", CsvInputFilePath, Delimiter, TargetDatabase, TargetSchema, TargetTable, UseHeader, HeaderRowsToSkip, Overwrite, Append, BatchSize, targetConnectionString);
-            bl.LoadToSql();            
+            bl.LoadToSql();
         }
 
         [TestMethod()]

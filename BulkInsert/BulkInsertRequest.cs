@@ -96,7 +96,7 @@ namespace BulkInsert
                 throw new FileNotFoundException(string.Format("Input File {0} was not found", InputFilePath));
 
             var fileExtension = (this.FileExtensionOverride != "")
-                ? this.FileExtensionOverride
+                ? this.FileExtensionOverride.ToUpper()
                 : Path.GetExtension(InputFilePath).ToUpper();
 
             var allowedExtensions = BulkLoaderFactory.GetSupportedExtensions();

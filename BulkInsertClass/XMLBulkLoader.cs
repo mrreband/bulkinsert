@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -41,7 +41,7 @@ namespace BulkInsertClass
                 GetXMLColumns();
                 CreateDestinationTable(targetConn, _targetTable);
                 LoadTable_SQLBulkCopy_Xml(targetConn);
-                
+
                 _transferFinish = DateTime.Now;
                 _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
                 //LogImport(targetConn);

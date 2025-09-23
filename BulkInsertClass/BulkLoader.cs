@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 using System.Linq;
 
@@ -13,7 +13,7 @@ namespace BulkInsertClass
     {
         public string InputFilePath { get; set; }
         public char Delimiter { get; set; }
-        
+
         //user parameters passed in 
         protected bool _overwrite;
         protected bool _append;
@@ -45,14 +45,14 @@ namespace BulkInsertClass
         public BulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "")
         {
             InputFilePath = inputFilePath;
-            Delimiter = (delimiter == "\\t") ? '\t' : delimiter.ToCharArray()[0];
+            Delimiter = (delimiter == "") ? ',' : (delimiter == "\\t") ? '\t' : delimiter.ToCharArray()[0];
             _headerRowsToSkip = headerRowsToSkip;
             _useHeaderRow = useHeaderRow;
 
             _overwrite = overwrite;
             _append = append;
             _targetDatabase = targetDatabase;
-            _targetSchema = targetSchema;
+            _targetSchema = (targetSchema == "") ? "dbo" : targetSchema;
             _targetTable = targetTable;
             _batchSize = batchSize;
             _sqlConnectionString = sqlConnectionString;
@@ -61,7 +61,7 @@ namespace BulkInsertClass
             _allowNulls = allowNulls;
             _schemaPath = schemaPath;
             TargetColumns = new List<Column>();
-            
+
             if (columnFilter != "")
                 ColumnsToKeep = columnFilter.Split(',').ToList();
             else
@@ -132,7 +132,7 @@ namespace BulkInsertClass
             if (!tableExists || _overwrite)
             {
                 //drop existing table if applicable
-                if (tableExists && _overwrite)  
+                if (tableExists && _overwrite)
                 {
                     Notify(string.Format("Dropping existing table {0}", targetTable));
                     var dropTableSyntax = string.Format("DROP TABLE {0}", targetTable);
@@ -213,7 +213,8 @@ namespace BulkInsertClass
 
         protected string GetSqlName(string rawName)
         {
-            var sqlName = Regex.Replace(rawName, @"[^\w]+", "_").Trim('_');
+            var processedName = rawName.Replace("%", "pct");
+            var sqlName = Regex.Replace(processedName, @"[^\w]+", "_").Trim('_');
             sqlName = "[" + Regex.Replace(sqlName, @"^[\d]+", "") + "]";
             return sqlName;
         }

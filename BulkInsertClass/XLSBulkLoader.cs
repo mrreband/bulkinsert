@@ -1,15 +1,6 @@
-﻿using LumenWorks.Framework.IO.Csv;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
+﻿using System.Data;
 using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 namespace BulkInsertClass
 {
@@ -41,7 +32,8 @@ namespace BulkInsertClass
                 targetConn.Open();
                 targetConn.ChangeDatabase(_targetDatabase);
 
-                foreach (string sheetName in _targetTables.Keys) {
+                foreach (string sheetName in _targetTables.Keys)
+                {
                     string targetTable = _targetTables[sheetName];
 
                     _transferStart = DateTime.Now;
@@ -70,21 +62,25 @@ namespace BulkInsertClass
                 {
                     _targetTable = _targetSchema + "." + _targetTable;
                 }
-                else {
+                else
+                {
                     _targetTable = GetWorksheetTableName(_sheetName);
                 }
                 _targetTables[_sheetName] = _targetTable;
             }
-            else {
+            else
+            {
                 // get all worksheet names and add them as separate target tables
                 var worksheetNames = GetWorksheetNames();
-                foreach (var worksheetName in worksheetNames) {
+                foreach (var worksheetName in worksheetNames)
+                {
                     _targetTables[worksheetName] = GetWorksheetTableName(worksheetName);
                 }
             }
         }
 
-        private string GetWorksheetTableName(string worksheetName) {
+        private string GetWorksheetTableName(string worksheetName)
+        {
             return _targetSchema + ".[" + worksheetName.Replace(" ", "_") + "]";
         }
 
@@ -132,7 +128,7 @@ namespace BulkInsertClass
                 schema.DefaultView.Sort = "ORDINAL_POSITION ASC";
 
                 string[] selectedColumns = new[] { "COLUMN_NAME", "ORDINAL_POSITION" };
-                
+
                 DataTable allColumns = new DataView(schema).ToTable(false);
                 DataTable allColumnNames = allColumns.DefaultView.ToTable(false, selectedColumns);
                 DataTable distinctColumnNames = allColumnNames.DefaultView.ToTable( /*distinct*/ true);

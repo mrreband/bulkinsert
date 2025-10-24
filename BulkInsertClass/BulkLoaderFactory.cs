@@ -16,7 +16,7 @@ namespace BulkInsertClass
 
         public static IBulkLoader GetBulkLoader(string bulkLoaderType, string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char quoteIdentifier = '"', char escapeCharacter = '"', string sheetName = "")
         {
-            IBulkLoader bulkLoader = null;
+            IBulkLoader? bulkLoader;
             switch (bulkLoaderType.ToUpper().TrimStart('.'))
             {
                 case "CSV":

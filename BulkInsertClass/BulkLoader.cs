@@ -239,10 +239,10 @@ namespace BulkInsertClass
 
     public class Column
     {
-        public string Name { get; set; }
-        public string DataType { get; set; }
+        public required string Name { get; set; }
+        public required string DataType { get; set; }
 
-        public int MaxLength { get; set; }
-        public bool IsNullable { get; set; }
+        public required int MaxLength { get; set; }
+        public required bool IsNullable { get; set; }
     }
 }

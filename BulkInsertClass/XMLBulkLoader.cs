@@ -1,8 +1,6 @@
-using System.Data;
+﻿using System.Data;
 using Microsoft.Data.SqlClient;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+
 
 namespace BulkInsertClass
 {
@@ -10,11 +8,11 @@ namespace BulkInsertClass
     {
         //xml-specific 
         private DataTable _dt;
-        private string _inputFilePath;
+        private string _inputFilePath = string.Empty;
 
         //Input file connection stuff
-        private string _oleDbConnectionString;
-        private string _fileTableName;
+        private string _oleDbConnectionString = string.Empty;
+        private string _fileTableName = string.Empty;
 
         public XMLBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char QuoteIdentifier = '"', char EscapeCharacter = '"')
             : base(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter)

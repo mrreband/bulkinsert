@@ -9,15 +9,15 @@ namespace BulkInsertClass
     public class CSVBulkLoader : BulkLoader, IBulkLoader
     {
         //CSV-specific fields
-        private string _schemaPath;
-        private string _firstDataRow;
+        private string _schemaPath = string.Empty;
+        private string _firstDataRow = string.Empty;
         private char _quoteIdentifier;
         private char _escapeCharacter;
 
         //Input file connection stuff
-        private string _oleDbConnectionString;
-        private string _fileTableName;
-        private string _inputFileSelectQuery;
+        private string _oleDbConnectionString = string.Empty;
+        private string _fileTableName = string.Empty;
+        private string _inputFileSelectQuery = string.Empty;
 
         public CSVBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char QuoteIdentifier = '"', char EscapeCharacter = '"')
             : base(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter)

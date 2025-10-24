@@ -6,9 +6,9 @@ namespace BulkInsertClass
 {
     public class SASBulkLoader : BulkLoader, IBulkLoader
     {
-        private string _oleDbConnectionString;
-        private string _fileTableName;
-        private string _inputFileSelectQuery;
+        private string _oleDbConnectionString = string.Empty;
+        private string _fileTableName = string.Empty;
+        private string _inputFileSelectQuery = string.Empty;
 
         public SASBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "")
             : base(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter)

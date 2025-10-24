@@ -225,7 +225,7 @@ namespace BulkInsertClass
         }
 
         ////////////////////////////////////////////////////////////////////////
-        public event EventHandler<NotifyEventArgs> Notifier;
+        public event EventHandler<NotifyEventArgs>? Notifier;
         protected virtual void OnNotify(NotifyEventArgs e)
         {
             Notifier?.Invoke(this, e);

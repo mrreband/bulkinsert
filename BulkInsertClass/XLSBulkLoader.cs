@@ -1,6 +1,6 @@
-﻿using System.Data;
+﻿using Microsoft.Data.SqlClient;
+using System.Data;
 using System.Data.OleDb;
-using Microsoft.Data.SqlClient;
 
 namespace BulkInsertClass
 {
@@ -10,9 +10,9 @@ namespace BulkInsertClass
         private Dictionary<string, string> _targetTables = new Dictionary<string, string>();
 
         //Input file connection stuff
-        private string _oleDbConnectionString;
-        private string _fileTableName;
-        private string _inputFileSelectQuery;
+        private string _oleDbConnectionString = string.Empty;
+        private string _fileTableName = string.Empty;
+        private string _inputFileSelectQuery = string.Empty;
 
         public XLSBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", string sheetName = "")
             : base(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter)
@@ -87,16 +87,24 @@ namespace BulkInsertClass
         public List<string> GetWorksheetNames()
         {
             List<string> sheets = new List<string>();
-            using (OleDbConnection connection = new OleDbConnection(_oleDbConnectionString))
+            using (OleDbConnection connection = new(_oleDbConnectionString))
             {
                 connection.Open();
-                DataTable dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-                foreach (DataRow drSheet in dt.Rows)
+                DataTable? dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                if (dt == null)
                 {
-                    string s = drSheet["TABLE_NAME"].ToString();
-                    if (s.Contains("$") && s.EndsWith("$'"))
+                    connection.Close();
+                    throw new InvalidOperationException($"Unable to retrieve schema information from Excel file: {InputFilePath}");
+                }
+                using (dt) {
+                    foreach (DataRow drSheet in dt.Rows)
                     {
-                        sheets.Add(s.StartsWith("'") ? s.Substring(1, s.Length - 3) : s.Substring(0, s.Length - 1));
+                        string? s = drSheet["TABLE_NAME"].ToString();
+                        if (s == null) continue;
+                        if (s.Contains("$") && s.EndsWith("$'"))
+                        {
+                            sheets.Add(s.StartsWith("'") ? s.Substring(1, s.Length - 3) : s.Substring(0, s.Length - 1));
+                        }
                     }
                 }
                 connection.Close();
@@ -136,7 +144,12 @@ namespace BulkInsertClass
                 distinctColumnNames = distinctColumnNames.DefaultView.ToTable();
 
                 foreach (DataRow c in distinctColumnNames.Rows)
-                    TargetColumns.Add(new Column() { Name = c["COLUMN_NAME"].ToString(), DataType = "varchar", MaxLength = _defaultColumnWidth, IsNullable = true });
+                {
+                    string? columnName = c["COLUMN_NAME"]?.ToString();
+                    if (columnName == null) continue;
+                    
+                    TargetColumns.Add(new Column() { Name = columnName, DataType = "varchar", MaxLength = _defaultColumnWidth, IsNullable = true });
+                }
 
                 if (ColumnsToKeep.Count > 0)
                 {

@@ -9,8 +9,15 @@
 *.user
 *.userosscache
 *.sln.docstates
+
+# config files for older versions of .NET
 ConnectionStrings.config
 App.config
+
+# modern .NET config files -
+# non-sensitive settings go in appsettings.json,
+# sensitive settings go in appsettings.dev.json, etc.
+appsettings.*.json
 
 bin/
 obj/

@@ -96,26 +96,50 @@ namespace BulkInsertClass
             using (OleDbConnection connection = new(_oleDbConnectionString))
             {
                 connection.Open();
-                DataTable? dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-                if (dt == null)
+
+                var rawTableNames = GetOleDbTableNames(connection);
+                foreach (var raw in rawTableNames)
                 {
-                    connection.Close();
-                    throw new InvalidOperationException($"Unable to retrieve schema information from Excel file: {InputFilePath}");
-                }
-                using (dt) {
-                    foreach (DataRow drSheet in dt.Rows)
+                    if (string.IsNullOrWhiteSpace(raw))
+                        continue;
+
+                    int dollarIndex = raw.IndexOf('$');
+                    if (dollarIndex >= 0)
                     {
-                        string? s = drSheet["TABLE_NAME"].ToString();
-                        if (s == null) continue;
-                        if (s.Contains("$") && s.EndsWith("$'"))
-                        {
-                            sheets.Add(s.StartsWith("'") ? s.Substring(1, s.Length - 3) : s.Substring(0, s.Length - 1));
-                        }
+                        var sheetName = dollarIndex == 0 ? raw : raw.Substring(0, dollarIndex);
+                        sheets.Add(sheetName);
                     }
                 }
+
                 connection.Close();
             }
             return sheets;
+        }
+
+        private List<string> GetOleDbTableNames(OleDbConnection connection)
+        {
+            DataTable? dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+            if (dt == null)
+                throw new InvalidOperationException($"No schema information for Excel file: {InputFilePath}");
+
+            var list = new List<string>();
+            using (dt)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    object? tableObj = dr["TABLE_NAME"];
+                    if (tableObj == null || tableObj == DBNull.Value)
+                        continue;
+
+                    string s = tableObj.ToString() ?? string.Empty;
+                    if (string.IsNullOrWhiteSpace(s))
+                        continue;
+
+                    list.Add(s.Replace("'", ""));
+                }
+            }
+
+            return list;
         }
 
         private void SetOledbConnectionString()
@@ -132,28 +156,43 @@ namespace BulkInsertClass
                 TargetColumns.Clear();
 
                 _inputFileSelectQuery = "SELECT ";
-                String[] tableRestrictions = new String[4];
-                tableRestrictions[2] = String.Format("'{0}$'", sheetName);
 
-                var tableSchema = oleDbConnection.GetSchema(SqlClientMetaDataCollectionNames.Tables);
-                var tableData = tableSchema.DefaultView.ToTable();
+                if (string.IsNullOrEmpty(_fileTableName))
+                {
+                    var rawNames = GetOleDbTableNames(oleDbConnection);
+                    if (rawNames.Count == 0)
+                        throw new InvalidOperationException($"Unable to determine table name from Excel file: {InputFilePath}");
+                    _fileTableName = rawNames.First();
+                }
 
-                var schema = oleDbConnection.GetSchema(SqlClientMetaDataCollectionNames.Columns, tableRestrictions);
+                // tableRestrictions = { TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME }
+                string[] tableRestrictions = new string[4];
+                tableRestrictions[2] = _fileTableName;
+
+                DataTable? schema = oleDbConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Columns, tableRestrictions);
+                if (schema == null)
+                    throw new InvalidOperationException($"Unable to retrieve column schema for sheet '{sheetName}' in file: {InputFilePath}");
+
                 schema.DefaultView.Sort = "ORDINAL_POSITION ASC";
 
                 string[] selectedColumns = new[] { "COLUMN_NAME", "ORDINAL_POSITION" };
 
                 DataTable allColumns = new DataView(schema).ToTable(false);
                 DataTable allColumnNames = allColumns.DefaultView.ToTable(false, selectedColumns);
-                DataTable distinctColumnNames = allColumnNames.DefaultView.ToTable( /*distinct*/ true);
+                DataTable distinctColumnNames = allColumnNames.DefaultView.ToTable(true);
                 distinctColumnNames.DefaultView.Sort = "ORDINAL_POSITION";
                 distinctColumnNames = distinctColumnNames.DefaultView.ToTable();
 
                 foreach (DataRow c in distinctColumnNames.Rows)
                 {
-                    string? columnName = c["COLUMN_NAME"]?.ToString();
-                    if (columnName == null) continue;
-                    
+                    object? colObj = c["COLUMN_NAME"];
+                    if (colObj == null || colObj == DBNull.Value)
+                        continue;
+
+                    string columnName = colObj.ToString() ?? string.Empty;
+                    if (string.IsNullOrEmpty(columnName))
+                        continue;
+
                     TargetColumns.Add(new Column() { Name = columnName, DataType = "varchar", MaxLength = _defaultColumnWidth, IsNullable = true });
                 }
 
@@ -178,7 +217,11 @@ namespace BulkInsertClass
             {
                 oleDbConnection.Open();
 
-                _fileTableName = oleDbConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null).Rows[0]["TABLE_NAME"].ToString().Replace("'", "");
+                var tableNames = GetOleDbTableNames(oleDbConnection);
+                if (tableNames.Count == 0)
+                    throw new InvalidOperationException($"Unable to determine table name from Excel file: {InputFilePath}");
+                _fileTableName = tableNames[0];
+
                 GetXlsInputColumns(sheetName);
 
                 using (var cmd = new OleDbCommand(_inputFileSelectQuery, oleDbConnection))

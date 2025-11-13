@@ -1,9 +1,11 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.OleDb;
+using System.Runtime.Versioning;
 
 namespace BulkInsertClass
 {
+    [SupportedOSPlatform("windows")]
     public class XLSBulkLoader : BulkLoader, IBulkLoader
     {
         private string _sheetName;
@@ -27,6 +29,9 @@ namespace BulkInsertClass
 
         public override void LoadToSql()
         {
+            if (!OperatingSystem.IsWindows())
+                throw new PlatformNotSupportedException("XLSBulkLoader requires Windows (OLE DB).");
+
             using (var targetConn = new SqlConnection(_sqlConnectionString))
             {
                 targetConn.Open();
@@ -84,6 +89,7 @@ namespace BulkInsertClass
             return _targetSchema + ".[" + worksheetName.Replace(" ", "_") + "]";
         }
 
+        [SupportedOSPlatform("windows")]
         public List<string> GetWorksheetNames()
         {
             List<string> sheets = new List<string>();

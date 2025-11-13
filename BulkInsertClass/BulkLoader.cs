@@ -1,11 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
+﻿using System.Text.RegularExpressions;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
-using System.Linq;
 
 namespace BulkInsertClass
 {
@@ -13,7 +9,7 @@ namespace BulkInsertClass
     {
         public string InputFilePath { get; set; }
         public char Delimiter { get; set; }
-        
+
         //user parameters passed in 
         protected bool _overwrite;
         protected bool _append;
@@ -24,6 +20,7 @@ namespace BulkInsertClass
         protected int _headerRowsToSkip;
         protected bool _useHeaderRow;
         protected bool _allowNulls;
+        protected string _schemaPath;
 
         //For building SQL Statements and binding columns
         protected List<Column> TargetColumns;
@@ -44,22 +41,23 @@ namespace BulkInsertClass
         public BulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "")
         {
             InputFilePath = inputFilePath;
-            Delimiter = (delimiter == "\\t") ? '\t' : delimiter.ToCharArray()[0];
+            Delimiter = (delimiter == "") ? ',' : (delimiter == "\\t") ? '\t' : delimiter.ToCharArray()[0];
             _headerRowsToSkip = headerRowsToSkip;
             _useHeaderRow = useHeaderRow;
 
             _overwrite = overwrite;
             _append = append;
             _targetDatabase = targetDatabase;
-            _targetSchema = targetSchema;
+            _targetSchema = (targetSchema == "") ? "dbo" : targetSchema;
             _targetTable = targetTable;
             _batchSize = batchSize;
             _sqlConnectionString = sqlConnectionString;
             _defaultColumnWidth = DefaultColumnWidth;
             _comments = (comments == "") ? "Load from BulkLoader" : comments + " (from BulkLoader)";
             _allowNulls = allowNulls;
+            _schemaPath = schemaPath;
             TargetColumns = new List<Column>();
-            
+
             if (columnFilter != "")
                 ColumnsToKeep = columnFilter.Split(',').ToList();
             else
@@ -115,14 +113,14 @@ namespace BulkInsertClass
                 rcCmd.ExecuteNonQuery();
         }
 
-        protected void CreateDestinationTable(SqlConnection targetConnection)
+        protected void CreateDestinationTable(SqlConnection targetConnection, string targetTable)
         {
             var tableExists = false;
             using (var tableExistsCmd = new SqlCommand("SELECT ISNULL(OBJECT_ID(@targetTable,'U'), -1)", targetConnection))
             {
                 tableExistsCmd.CommandType = CommandType.Text;
-                tableExistsCmd.Parameters.AddWithValue("@targetTable", _targetTable);
-                tableExists = ((int)tableExistsCmd.ExecuteScalar() == -1) ? false : true;
+                tableExistsCmd.Parameters.AddWithValue("@targetTable", targetTable);
+                tableExists = (int)tableExistsCmd.ExecuteScalar() != -1;
             }
 
             ///////////////////////////////////////////////////////////////////////////
@@ -130,10 +128,10 @@ namespace BulkInsertClass
             if (!tableExists || _overwrite)
             {
                 //drop existing table if applicable
-                if (tableExists && _overwrite)  
+                if (tableExists && _overwrite)
                 {
-                    Notify(string.Format("Dropping existing table {0}", _targetTable));
-                    var dropTableSyntax = string.Format("DROP TABLE {0}", _targetTable);
+                    Notify(string.Format("Dropping existing table {0}", targetTable));
+                    var dropTableSyntax = string.Format("DROP TABLE {0}", targetTable);
                     using (var dropTableCmd = new SqlCommand(dropTableSyntax, targetConnection))
                     {
                         dropTableCmd.ExecuteNonQuery();
@@ -141,8 +139,8 @@ namespace BulkInsertClass
                 }
 
                 //create table sql syntax
-                Notify(string.Format("Creating Target Table {0}; Overwrite = {1}; Append = {2}", _targetTable, _overwrite, _append));
-                var createTableSql = string.Format("CREATE TABLE {0} (", _targetTable);
+                Notify(string.Format("Creating Target Table {0}; Overwrite = {1}; Append = {2}", targetTable, _overwrite, _append));
+                var createTableSql = string.Format("CREATE TABLE {0} (", targetTable);
                 int i = 1;
                 foreach (var column in TargetColumns)
                 {
@@ -163,7 +161,7 @@ namespace BulkInsertClass
             }
 
             if (tableExists && !_overwrite && !_append)
-                throw new Exception(string.Format("Table {0} Already Exists -- use overwrite flag to overwrite or append flag to append", _targetTable));
+                throw new Exception(string.Format("Table {0} Already Exists -- use overwrite flag to overwrite or append flag to append", targetTable));
 
             ////for completeness: 
             ////if (tableExists && !overwrite && append)
@@ -211,7 +209,8 @@ namespace BulkInsertClass
 
         protected string GetSqlName(string rawName)
         {
-            var sqlName = Regex.Replace(rawName, @"[^\w]+", "_").Trim('_');
+            var processedName = rawName.Replace("%", "pct");
+            var sqlName = Regex.Replace(processedName, @"[^\w]+", "_").Trim('_');
             sqlName = "[" + Regex.Replace(sqlName, @"^[\d]+", "") + "]";
             return sqlName;
         }
@@ -222,7 +221,7 @@ namespace BulkInsertClass
         }
 
         ////////////////////////////////////////////////////////////////////////
-        public event EventHandler<NotifyEventArgs> Notifier;
+        public event EventHandler<NotifyEventArgs>? Notifier;
         protected virtual void OnNotify(NotifyEventArgs e)
         {
             Notifier?.Invoke(this, e);
@@ -236,10 +235,10 @@ namespace BulkInsertClass
 
     public class Column
     {
-        public string Name { get; set; }
-        public string DataType { get; set; }
+        public required string Name { get; set; }
+        public required string DataType { get; set; }
 
-        public int MaxLength { get; set; }
-        public bool IsNullable { get; set; }
+        public required int MaxLength { get; set; }
+        public required bool IsNullable { get; set; }
     }
 }

@@ -1,29 +1,23 @@
-﻿using LumenWorks.Framework.IO.Csv;
-using System;
-using System.Collections.Generic;
+﻿using CsvReader;
 using System.Data;
 using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 namespace BulkInsertClass
 {
     public class CSVBulkLoader : BulkLoader, IBulkLoader
     {
         //CSV-specific fields
-        private string _schemaPath;
-        private string _firstDataRow;
+        private string _schemaPath = string.Empty;
+        private string _firstDataRow = string.Empty;
         private char _quoteIdentifier;
         private char _escapeCharacter;
 
         //Input file connection stuff
-        private string _oleDbConnectionString;
-        private string _fileTableName;
-        private string _inputFileSelectQuery;
+        private string _oleDbConnectionString = string.Empty;
+        private string _fileTableName = string.Empty;
+        private string _inputFileSelectQuery = string.Empty;
 
         public CSVBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char QuoteIdentifier = '"', char EscapeCharacter = '"')
             : base(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter)
@@ -39,7 +33,11 @@ namespace BulkInsertClass
         {
             using (var targetConn = new SqlConnection(_sqlConnectionString))
             {
+                Console.WriteLine(_sqlConnectionString);
+                Console.WriteLine(_targetDatabase);
+
                 targetConn.Open();
+
                 if (_targetDatabase != "")
                     targetConn.ChangeDatabase(_targetDatabase);
 
@@ -48,13 +46,13 @@ namespace BulkInsertClass
 
                 _fileTableName = Path.GetFileName(InputFilePath);
                 GetTextFileInputColumns();
-                CreateDestinationTable(targetConn);
+                CreateDestinationTable(targetConn, _targetTable);
 
                 if (TargetColumns.Count <= 255)
                     LoadTable_SQLBulkCopy_Csv(targetConn);
                 else
                     LoadTable_SQLBulkCopy_LumenWorks(targetConn);
-                
+
                 _transferFinish = DateTime.Now;
                 _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
 
@@ -66,7 +64,7 @@ namespace BulkInsertClass
         private void SetOledbConnectionString()
         {
             var parentDirectory = Path.GetDirectoryName(InputFilePath);
-            _oleDbConnectionString = "Provider=Microsoft.Ace.OLEDB.12.0;Data Source='" + parentDirectory + "';Extended Properties='text;HDR=Yes;FMT=Delimited';";
+            _oleDbConnectionString = "Provider=Microsoft.Ace.OLEDB.12.0;Data Source='" + parentDirectory + "';Extended Properties='text;HDR=Yes;FMT=Delimited;CharacterSet=65001';";
         }
 
         private async void GetTextFileInputColumns()
@@ -208,7 +206,7 @@ namespace BulkInsertClass
         private void LoadTable_SQLBulkCopy_LumenWorks(SqlConnection targetConn)
         {
             Notify("Starting BulkCopy_Csv_Lumenworks");
-            using (var csvReader = new CsvReader(new StreamReader(InputFilePath), true, Delimiter, _quoteIdentifier, _escapeCharacter, '#', ValueTrimmingOptions.All))
+            using (var csvReader = new CsvReader.CsvReader(new StreamReader(InputFilePath), true, Delimiter, _quoteIdentifier, _escapeCharacter, '#', ValueTrimmingOptions.All))
             {
                 csvReader.MissingFieldAction = MissingFieldAction.ReplaceByNull;
 

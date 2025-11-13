@@ -1,22 +1,14 @@
-﻿using LumenWorks.Framework.IO.Csv;
-using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 namespace BulkInsertClass
 {
     public class SASBulkLoader : BulkLoader, IBulkLoader
     {
-        private string _oleDbConnectionString;
-        private string _fileTableName;
-        private string _inputFileSelectQuery;
+        private string _oleDbConnectionString = string.Empty;
+        private string _fileTableName = string.Empty;
+        private string _inputFileSelectQuery = string.Empty;
 
         public SASBulkLoader(string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "")
             : base(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter)
@@ -38,10 +30,10 @@ namespace BulkInsertClass
                 _rowCountStart = (_overwrite == true) ? 0 : GetSqlRowCount(targetConn, _targetTable);
 
                 _fileTableName = Path.GetFileName(InputFilePath);
-                CreateDestinationTable(targetConn);
+                CreateDestinationTable(targetConn, _targetTable);
 
                 LoadTable_SQLBulkCopy(targetConn);
-                
+
                 _transferFinish = DateTime.Now;
                 _rowCountFinish = GetSqlRowCount(targetConn, _targetTable);
                 LogImport(targetConn);
@@ -81,7 +73,7 @@ namespace BulkInsertClass
             var parentDirectory = Path.GetDirectoryName(InputFilePath);
             _oleDbConnectionString = "Provider=SAS Local Data Provider 9.44;Data Source='" + parentDirectory + "'";
         }
-        
+
         /// <summary>
         /// IDataReader from SAS to SQL -- reliable for files with less than 255 columns.  Microsoft.Ace.OLEDB.12.0 cannot handle any more than that.
         /// </summary>

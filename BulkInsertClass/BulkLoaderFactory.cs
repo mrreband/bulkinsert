@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BulkInsertClass;
-
-namespace BulkInsertClass
+﻿namespace BulkInsertClass
 {
     public static class BulkLoaderFactory
     {
-        public static IBulkLoader GetBulkLoader(string bulkLoaderType, string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char quoteIdentifier = '"', char escapeCharacter = '"')
+        public static List<string> GetSupportedExtensions()
         {
-            IBulkLoader bulkLoader = null;
-            switch (bulkLoaderType.ToUpper())
+            return new List<string> { ".XLSX", ".XLS", ".CSV", ".TAB", ".SAS", ".SAS7BDAT", ".XML" };
+        }
+
+        public static IBulkLoader GetBulkLoader(string bulkLoaderType, string inputFilePath, string delimiter, string targetDatabase, string targetSchema, string targetTable, bool useHeaderRow, int headerRowsToSkip, bool overwrite, bool append, int batchSize, string sqlConnectionString, int DefaultColumnWidth = 1000, bool allowNulls = true, string nullValue = "", string comments = "", string schemaPath = "", string columnFilter = "", char quoteIdentifier = '"', char escapeCharacter = '"', string sheetName = "")
+        {
+            IBulkLoader? bulkLoader;
+            switch (bulkLoaderType.ToUpper().TrimStart('.'))
             {
-                case "CSV":  case "TAB":
+                case "CSV":
+                case "TAB":
                     bulkLoader = new CSVBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter, quoteIdentifier, escapeCharacter);
                     break;
-                case "XLSX": case "XLS":
-                    bulkLoader = new XLSBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter);
+                case "XLSX":
+                case "XLS":
+                    bulkLoader = new XLSBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter, sheetName);
                     break;
                 case "SAS":
                     bulkLoader = new SASBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter);
@@ -27,9 +27,9 @@ namespace BulkInsertClass
                     bulkLoader = new XMLBulkLoader(inputFilePath, delimiter, targetDatabase, targetSchema, targetTable, useHeaderRow, headerRowsToSkip, overwrite, append, batchSize, sqlConnectionString, DefaultColumnWidth, allowNulls, nullValue, comments, schemaPath, columnFilter);
                     break;
                 default:
-                    throw new ArgumentException("Invalid Repository Type");
+                    throw new ArgumentException("Invalid bulkLoaderType: " + bulkLoaderType);
             }
-            
+
             return bulkLoader;
         }
     }

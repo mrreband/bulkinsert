@@ -26,3 +26,5 @@ obj/
 packages/
 
 TestResults/
+
+*.env

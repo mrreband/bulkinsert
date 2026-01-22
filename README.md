@@ -1,6 +1,6 @@
 # BulkInsert
 
-*Modular class library + CLIs for bulk data loading into SQL Server, supporting multiple input file formats and advanced configuration.*
+*Modular class library + CLIs for bulk data loading into SQL Server, with support for multiple input file formats and advanced configuration.*
 
 ---
 
@@ -8,7 +8,7 @@
 
 - Input formats: CSV, XLS/XLSX, SAS, XML
 - Output: MS SQL Server
-- Customizable via appsettings and environment variables (see feature table above)
+- Customizable via appsettings and environment variables (see feature table below)
 - Handles schema parsing, column filtering, batching, and error handling
 
 ### Design Highlights
@@ -73,12 +73,12 @@
 
 ## Supported options
 
-| Option              | Required/Optional | Data Type | Default | Applies to File Types | Description                                                                                  |
+| Option              | Required/Optional | Data Type | Default | Applies to File Types | Description                                                                                 |
 |----------------------|------------------|-----------|---------|----------------------|----------------------------------------------------------------------------------------------|
 | SheetName            | Optional         | string    | None    | xlsx                 | Name of the sheet to load (for xlsx files)                                                   |
 | AllowNulls           | Optional         | bool      | False   | all                  | Allow null values in data                                                                    |
 | FileExtensionOverride| Optional         | string    | None    | all                  | Override the input file extension, (e.g., `file.txt` is actually csv) format                 |
-| Delimiter            | Optional         | string    | ,       | csv                  | Delimiter for csv files                                                    |
+| Delimiter            | Optional         | string    | ,       | csv                  | Delimiter for csv files                                                                      |
 | TargetServer         | Required         | string    | None    | all                  | Target SQL instance                                                                          |
 | TargetDatabase       | Required         | string    | None    | all                  | Target SQL database                                                                          |
 | TargetSchema         | Optional         | string    | dbo     | all                  | Target SQL schema                                                                            |
@@ -86,8 +86,8 @@
 | UseHeader            | Optional         | bool      | True    | csv, xlsx            | Whether to use the first row as column headers                                               |
 | HeaderRowsToSkip     | Optional         | int       | 0       | csv, xlsx            | Number of rows to skip from the top                                                          |
 | CopyLocal            | Optional         | bool      | False   | all                  | Copy local files to a temp folder for server side processing                                 |
-| Overwrite            | Optional         | bool      | False   | all                  | Whether to overwrite existing data (create target table)                                                           |
-| Append               | Optional         | bool      | False   | all                  | Whether to append to existing data (target table should already exist)                                                           |
+| Overwrite            | Optional         | bool      | False   | all                  | Whether to overwrite existing data (create target table)                                     |
+| Append               | Optional         | bool      | False   | all                  | Whether to append to existing data (target table should already exist)                       |
 | DefaultColumnWidth   | Optional         | int       | 50      | all                  | Default column width for all columns in the target table                                     |
 | BatchSize            | Optional         | int       | 1000    | all                  | Batch size for bulk loading data (number of rows)                                            |
 | Comments             | Optional         | string    | None    | all                  | Comments for logging                                                                         |
